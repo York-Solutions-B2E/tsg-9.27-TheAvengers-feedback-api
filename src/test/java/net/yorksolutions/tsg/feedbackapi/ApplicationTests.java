@@ -1,4 +1,4 @@
-package net.yorksolutions.tsg_9.__TheAvengers_feedback_api;
+package net.yorksolutions.tsg.feedbackapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
