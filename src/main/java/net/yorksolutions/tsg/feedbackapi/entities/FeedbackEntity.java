@@ -10,7 +10,7 @@ import java.util.UUID;
 @Table(name="feedback")
 public class FeedbackEntity {
 
-    /**
+    /*
      * SECTION: Table-Entity Variables
      */
     @Id
@@ -18,19 +18,13 @@ public class FeedbackEntity {
     private UUID id;
 
     @Column(nullable = false, length = 36)
-    @NotBlank
-    @Size(max = 36)
     private String memberId;
 
     @Column(nullable = false, length = 80)
-    @NotBlank
-    @Size(max = 80)
     private String providerName;
 
     @Column(nullable = false)
-    @Min(1)
-    @Max(5)
-    @NotNull
+
     private Integer rating;
 
     @Column(length = 200)
@@ -39,12 +33,12 @@ public class FeedbackEntity {
     @Column(nullable = false)
     private OffsetDateTime submittedAt;
 
-    /**
+    /*
      * SECTION: No-Args Constructor
      */
     public FeedbackEntity() {}
 
-    /**
+    /*
      * SECTION: Required-Args Constructor
      * Rec'd input will NOT have `id` OR `submittedAt` so the
      * Database / Service layer can handle creating those respectively
@@ -56,7 +50,7 @@ public class FeedbackEntity {
         this.comment = comment;
     }
 
-    /**
+    /*
      * SECTION: All-Args Constructor
      */
     public FeedbackEntity(UUID id, String memberId, String providerName, Integer rating, String comment, OffsetDateTime submittedAt) {
@@ -68,7 +62,7 @@ public class FeedbackEntity {
         this.submittedAt = submittedAt;
     }
 
-    /**
+    /*
      * SECTION: Getter/Setter Methods
      */
     public UUID getId() {
@@ -119,7 +113,7 @@ public class FeedbackEntity {
         this.submittedAt = submittedAt;
     }
 
-    /**
+    /*
      * SECTION: Overrides for equals() and hashCode()
      */
     @Override
@@ -135,7 +129,7 @@ public class FeedbackEntity {
         return id.hashCode();
     }
 
-    /**
+    /*
      * SECTION: Override for toString()
      */
     @Override

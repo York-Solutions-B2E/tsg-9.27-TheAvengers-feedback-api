@@ -1,28 +1,88 @@
 package net.yorksolutions.tsg.feedbackapi.controllers;
 
+import jakarta.validation.Valid;
+import net.yorksolutions.tsg.feedbackapi.dtos.ErrorResponse;
+import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackRequest;
+import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackResponse;
+import net.yorksolutions.tsg.feedbackapi.services.FeedbackService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
 public class FeedbackController {
 
-    // TODO: POST /feedback
-        // NOTE: Input should be validated `(@Valid @RequestBody DTOtype dtoType, BindingResult result)
-        // TODO: Map to `FeedbackRequest` (Service-layer to handle getting id from DB / generating submittedAt)
+    /*
+     * SECTION: Constructor-based D.I. (w/o @Autowired)
+     */
 
-        // NOTE: To allow a versatile return, use the wild-card `public ResponseEntity<?>`
-        // NOTE: It is *best-practice* to return a DTO NOT the Entity Object
-        // TODO: If Binding Result has errors (no 'else' statement necessary)
-            // TODO: Jump into Service Layer to...
-                // TODO: Feed Binding Result into `ErrorResponse` DTO (incl. Validation) [Conversion]
-            // TODO: Return `ErrorResponse` DTO and 400
+    private FeedbackService feedbackService;
 
-        // TODO: Steps for "Happy-Path" (no 'else' statement necessary)...
-            // TODO: Jump into `FeedbackService`
-                // TODO: Feed `FeedbackRequest` into `FeedbackEntity`
-                // TODO: Created submitted at date
-                // TODO: Commit to Database
-                // TODO: Retrieve ID from new Database entry
-                // TODO: Convert to `FeedbackResponse`
+    public FeedbackController(FeedbackService feedbackService) {
+        this.feedbackService = feedbackService;
+    }
+
+    /*
+     * SECTION: End-Points
+     */
+
+    /**
+     * Client shall provide the following JSON payload:
+     * <p>
+     * EX: { "memberId": "m-123", "providerName": "Dr. Smith",
+     * "rating": 4, "comment": "Great experience." }
+     * <p>
+     * This method will validate input, interact with necessary methods
+     * in the `FeedbackService` method and return the appropriate response
+     * @param clientInput mapped to FeedbackRequest DTO
+     * @param result the required Spring Validation mechanism
+     * @return 201 and create resource | 400 and validation errors (PASS | FAIL)
+     */
+    // NOTE: `ResponseEntity<?>` is using the wild-card to handle returning
+    // ... different DTOs based on PASS or FAIL
+    // NOTE: It is *best-practice* to return a DTO ... NOT an Entity
+    @PostMapping("/feedback")
+    public ResponseEntity<?> createNewFeedbackEntry(
+            @Valid @RequestBody FeedbackRequest clientInput, BindingResult result
+    ) {
+        /*
+         * SECTION: Handle necessary Validation-error steps
+         */
+        if (result.hasErrors()) {
+            // DESC: Convert Validation Errors to Client-friendly DTO
+            ErrorResponse returnedErrRespDto = feedbackService
+                    .convertBindingResultToErrorResponse(result);
+
+            // DESC: Return Client-friendly DTO and HTTP Bad Request
+            return ResponseEntity
+                    .status(400)
+                    .body(returnedErrRespDto);
+        }
+
+        /*
+         * SECTION: Handle necessary Validation-pass steps
+         */
+        // TODO: Jump into `FeedbackService`
+            // TODO: Feed `FeedbackRequest` into `FeedbackEntity`
+            // TODO: Created submitted at date
+            // TODO: Commit to Database
+            // TODO: Retrieve ID from new Database entry
+            // TODO: Convert to `FeedbackResponse`
             // TODO: Return the `FeedbackResponse` (incl. `id` and `submittedAt`) and 201 OR ...
-            // NOTE: Need to look into Kafka to determine how to properly handle the following step
-            // TODO: Jump into `FeedbackEventPublisher` / Publish directly with `FeedbackEventPublisher`
+        // NOTE: Need to look into Kafka to determine how to properly handle the following step
+        // TODO: Jump into `FeedbackEventPublisher` / Publish directly with `FeedbackEventPublisher`
+
+
+
+
+
+        // FIXME: Pass an instance of FeedbackResponse
+        return ResponseEntity
+                .status(200)
+                .body(new FeedbackResponse());
+    }
 
 
     // TODO: GET /feedback/{id}
