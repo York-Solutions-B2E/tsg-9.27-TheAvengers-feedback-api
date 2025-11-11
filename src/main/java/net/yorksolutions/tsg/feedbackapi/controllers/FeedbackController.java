@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import net.yorksolutions.tsg.feedbackapi.dtos.ErrorResponse;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackRequest;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackResponse;
+import net.yorksolutions.tsg.feedbackapi.entities.FeedbackEntity;
 import net.yorksolutions.tsg.feedbackapi.services.FeedbackService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -64,24 +65,20 @@ public class FeedbackController {
         /*
          * SECTION: Handle necessary Validation-pass steps
          */
-        // TODO: Jump into `FeedbackService`
-            // TODO: Feed `FeedbackRequest` into `FeedbackEntity`
-            // TODO: Created submitted at date
-            // TODO: Commit to Database
-            // TODO: Retrieve ID from new Database entry
-            // TODO: Convert to `FeedbackResponse`
-            // TODO: Return the `FeedbackResponse` (incl. `id` and `submittedAt`) and 201 OR ...
-        // NOTE: Need to look into Kafka to determine how to properly handle the following step
-        // TODO: Jump into `FeedbackEventPublisher` / Publish directly with `FeedbackEventPublisher`
+        // DESC: Map to `FeedbackEntity` and add entry to database
+        FeedbackEntity newDatabaseEntry = feedbackService
+                .createNewFeedbackEntry(clientInput);
 
+        // DESC: Map `FeedbackEntity` to `FeedbackResponse` (incl. `id` and `submittedAt`)
+        FeedbackResponse resposeForClient = feedbackService
+                .mapEntityToResponse(newDatabaseEntry);
 
+        // TODO: Handle `FeedbackResponse` (i.e., "Publish" to Kafka)
+            // TODO: Look into Kafka -- This will pass to `FeedbackEventPublisher`
 
-
-
-        // FIXME: Pass an instance of FeedbackResponse
         return ResponseEntity
                 .status(200)
-                .body(new FeedbackResponse());
+                .body(resposeForClient);
     }
 
 
