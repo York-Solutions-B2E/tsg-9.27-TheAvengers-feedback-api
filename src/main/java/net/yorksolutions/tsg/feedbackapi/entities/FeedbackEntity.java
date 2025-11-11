@@ -24,7 +24,6 @@ public class FeedbackEntity {
     private String providerName;
 
     @Column(nullable = false)
-
     private Integer rating;
 
     @Column(length = 200)

@@ -29,12 +29,12 @@ public class FeedbackRequest {
     private Integer rating;
 
     @Size(max = 200, message = "comment, IF provided, MUST be <= 200 characters")
+    @NotNull(message = "comment can be empty, however it CANNOT be null.")
     private String comment;
 
     /*
      * SECTION: No-Args Constructor
      */
-
     public FeedbackRequest() {}
 
     /*
