@@ -40,10 +40,21 @@ public class FeedbackEntity {
     private OffsetDateTime submittedAt;
 
     /**
-     * SECTION:
-     * No-Args Constructor
+     * SECTION: No-Args Constructor
      */
     public FeedbackEntity() {}
+
+    /**
+     * SECTION: Required-Args Constructor
+     * Rec'd input will NOT have `id` OR `submittedAt` so the
+     * Database / Service layer can handle creating those respectively
+     */
+    public FeedbackEntity(String memberId, String providerName, Integer rating, String comment) {
+        this.memberId = memberId;
+        this.providerName = providerName;
+        this.rating = rating;
+        this.comment = comment;
+    }
 
     /**
      * SECTION: All-Args Constructor
