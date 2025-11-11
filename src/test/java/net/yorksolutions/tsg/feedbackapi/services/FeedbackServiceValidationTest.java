@@ -22,7 +22,32 @@ public class FeedbackServiceValidationTest {
         assertThatCode(() -> feedbackService.submitFeedback(validRequest))
                 .doesNotThrowAnyException();
     }
+
+    @Test
+    void memberId_missing_throwsException() {
+        validRequest.setMemberId(null);
+        assertThatThrownBy(() -> feedbackService.submitFeedback(validRequest))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("memberId");
+    }
+
+    @Test
+    void rating_outOfRange_throwsException() {
+        validRequest.setRating(7);
+        assertThatThrownBy(() -> feedbackService.submitFeedback(validRequest))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("rating");
+    }
+
+    @Test
+    void comment_tooLong_throwsException() {
+        validRequest.setComment("A".repeat(201));
+        assertThatThrownBy(() -> feedbackService.submitFeedback(validRequest))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("comment");
+    }
 }
+
 
 
 
