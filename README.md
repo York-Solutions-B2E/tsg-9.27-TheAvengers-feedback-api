@@ -44,3 +44,9 @@ TBD...
 ### Docker Compose
 
 [See Docker Hub for Instructions](https://hub.docker.com/_/postgres)
+
+## Potential Future Add-Ons
+The following is a list of *potential future add-ons* and *best-practice* alternatives not used in this code-base:
+
+- `FeedbackService` - `createNewFeedbackEntry()`: Logic to prevent multiple review
+  - More of a nice-to-have, however it is out of scope/spec

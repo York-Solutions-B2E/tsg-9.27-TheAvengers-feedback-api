@@ -1,16 +1,13 @@
 package net.yorksolutions.tsg.feedbackapi.services;
 
-import net.yorksolutions.tsg.feedbackapi.dtos.ErrorResponse;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackRequest;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackResponse;
 import net.yorksolutions.tsg.feedbackapi.entities.FeedbackEntity;
 import net.yorksolutions.tsg.feedbackapi.repositories.FeedbackRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 import java.time.OffsetDateTime;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Handle all necessary business logic up to and including
@@ -31,34 +28,13 @@ public class FeedbackService {
     /*
      * SECTION: FeedbackService Methods
      */
-    public ErrorResponse convertBindingResultToErrorResponse(
-            BindingResult invalidUserInputError
-    ) {
-        // DESC: Map for 'field' - 'message' (from BindingResult)
-        HashMap<String, String> errorFieldsAndMessages = new HashMap<>();
-
-        // DESC: Loop through FieldErrors and update Map
-        for (FieldError fieldError : invalidUserInputError.getFieldErrors()) {
-            errorFieldsAndMessages.put(fieldError.getField(), fieldError.getDefaultMessage());
-        }
-
-        // DESC: Create ErrorResponse (with HashMap data)
-        ErrorResponse userValidErrResponse = new ErrorResponse(
-                "Errors", "Validation Failed",  errorFieldsAndMessages
-        );
-
-        return userValidErrResponse;
-    }
-
     public FeedbackEntity createNewFeedbackEntry(
             FeedbackRequest clientInput
     ){
-        /* FUTURE: Logic to prevent multiple reviews (NOT in spec) */
-
         // DESC: Map `FeedbackRequest` into `FeedbackEntity`
         FeedbackEntity convertedInput = new FeedbackEntity(
                 clientInput.getMemberId(), clientInput.getProviderName(),
-                clientInput.getRating(), clientInput.getComment()
+                Integer.valueOf(clientInput.getRating()), clientInput.getComment()
         );
 
         // DESC: Created submitted at date
@@ -84,5 +60,37 @@ public class FeedbackService {
         );
 
         return convertedOutput;
+    }
+
+    public ArrayList<FeedbackResponse> mapEntitiesToResponse(
+            ArrayList<FeedbackEntity> returnedDatabaseEntities
+    ) {
+        ArrayList<FeedbackResponse> convertedOutput = new ArrayList<>();
+
+        // DESC: Short-circuit if nothing in list (i.e., return empty list)
+        if (returnedDatabaseEntities.isEmpty()) {
+            return convertedOutput;
+        }
+
+        // DESC: Pass each to the singular method above
+        for (FeedbackEntity returnedDatabaseEntity : returnedDatabaseEntities) {
+            convertedOutput.add(mapEntityToResponse(returnedDatabaseEntity));
+        }
+
+        return convertedOutput;
+    }
+
+    public FeedbackEntity getFeedbackById(UUID id) {
+        Optional<FeedbackEntity> feedbackThatMayExist = feedbackRepository.findById(id);
+        return feedbackThatMayExist.orElse(null);
+    }
+
+    public ArrayList<FeedbackEntity> getAllFeedbackByMemberId(
+            String memberId
+    ) {
+        ArrayList<FeedbackEntity> returnedDatabaseEntities = feedbackRepository
+                .findByMemberId(memberId);
+
+        return returnedDatabaseEntities;
     }
 }

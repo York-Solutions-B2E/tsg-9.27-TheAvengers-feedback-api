@@ -14,35 +14,60 @@ public class FeedbackRequest {
 
     /*
      * SECTION: DTO / POJO Variables
+     * - General Note: This is using RegEx to better-validate the input
+     * ... because JackSON appears to type-coerce an Integer into a String
+     * ... without throwing errors, yet it throws an HttpMessageNotReadable
+     * ... Exception when a String is provided where an Integer is expected.
+     * - General Note: Per spec, there is NO enforcement on the alphanumerical
+     * ... requirement, alphabetical requirement, or a minimum of three. That
+     * ... was simply added to better mirror the example JSON payload AND to
+     * ... have more of a universal catch-all.
+     * - General Note: The `rating` field, in so far as this DTO, has been
+     * ... changed from an Integer to a String as it is not possible to run
+     * ... RegEx on an Integer. Making this change creates better validation
+     * ... enforcement and, with RegEx, ensures that the proper error message
+     * ... is thrown regardless of the provided input.
      */
-    @NotBlank(message = "memberId CANNOT be blank.")
-    @Size(max = 36, message = "memberId MUST be <= 36 characters.")
+
+    @Pattern(
+            regexp = "(?=.*[a-zA-Z])^[a-zA-Z0-9-]{3,36}$",
+            message = "memberId MUST be between 3 and 36 characters AND use alphanumeric characters (e.g., m-123)"
+    )
     private String memberId;
 
-    @NotBlank(message = "providerName CANNOT be blank.")
-    @Size(max = 80, message = "providerName MUST be <= 80 characters.")
+    @Pattern(
+            regexp = "^[a-zA-Z][a-zA-Z\s.-]{1,78}[a-zA-Z]$",
+            message = "providerName MUST be between 3 and 80 characters. It MAY contain periods '.' or dashes '-', however they CANNOT be at the start OR the end."
+    )
     private String providerName;
 
-    @Min(value = 1, message = "rating MUST be >= 1.")
-    @Max(value = 5, message = "rating MUST be <= 5.")
-    @NotNull(message = "rating CANNOT be blank (and MUST be numeric).")
-    private Integer rating;
+    @Pattern(
+            regexp = "^[12345]$",
+            message = "rating MUST be a value between 1 and 5 (inclusive)."
+    )
+    private String rating;
 
-    @Size(max = 200, message = "comment, IF provided, MUST be <= 200 characters")
-    @NotNull(message = "comment can be empty, however it CANNOT be null.")
+    @Size(
+            max = 200, message = "comment, IF provided, MUST be <= 200 characters"
+    )
+    @NotNull(
+            message = "comment can be empty, however it CANNOT be null."
+    )
     private String comment;
 
     /*
      * SECTION: No-Args Constructor
      */
+
     public FeedbackRequest() {}
 
     /*
      * SECTION: All-Args Constructor
      */
+
     public FeedbackRequest(
             String memberId, String providerName,
-            Integer rating, String comment
+            String rating, String comment
     ) {
         this.memberId = memberId;
         this.providerName = providerName;
@@ -53,6 +78,7 @@ public class FeedbackRequest {
     /*
      * SECTION: Getter / Setter Methods
      */
+
     public String getMemberId() {
         return memberId;
     }
@@ -69,11 +95,11 @@ public class FeedbackRequest {
         this.providerName = providerName;
     }
 
-    public Integer getRating() {
+    public String getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(String rating) {
         this.rating = rating;
     }
 
@@ -88,14 +114,15 @@ public class FeedbackRequest {
     /*
      * SECTION: toString Override
      */
+
     @Override
     public String toString() {
-        return "FeedbackRequest{" +
-                "memberId='" + memberId + '\'' +
-                ", providerName='" + providerName + '\'' +
-                ", rating=" + rating +
-                ", comment='" + comment + '\'' +
-                '}';
+        return "{" +
+                " \"memberId\": " + "\"" + memberId + "\"," +
+                " \"providerName\": " + "\""  + providerName + "\"," +
+                " \"rating\": " + "\""  + rating + "\"," +
+                " \"comment\": " + "\""  + comment + "\"" +
+                " }";
     }
 }
 
