@@ -1,12 +1,6 @@
 package net.yorksolutions.tsg.feedbackapi.services;
 
-import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackRequest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.*;
-
-public class FeedbackServiceValidationTest {
+public class FeedbackServiceTests {
 //
 //    private FeedbackService feedbackService;
 //    private FeedbackRequest validRequest;

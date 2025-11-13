@@ -1,6 +1,7 @@
 package net.yorksolutions.tsg.feedbackapi.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
 /**
@@ -33,18 +34,21 @@ public class FeedbackRequest {
             regexp = "(?=.*[a-zA-Z])^[a-zA-Z0-9-]{3,36}$",
             message = "memberId MUST be between 3 and 36 characters AND use alphanumeric characters (e.g., m-123)"
     )
+    @Schema(example = "m-123", description = "Alphanumerical Member ID")
     private String memberId;
 
     @Pattern(
             regexp = "^[a-zA-Z][a-zA-Z\s.-]{1,78}[a-zA-Z]$",
             message = "providerName MUST be between 3 and 80 characters. It MAY contain periods '.' or dashes '-', however they CANNOT be at the start OR the end."
     )
+    @Schema(example = "Dr. Gregg Trunnell", description = "Doctor / Provider / Physician Name")
     private String providerName;
 
     @Pattern(
             regexp = "^[12345]$",
             message = "rating MUST be a value between 1 and 5 (inclusive)."
     )
+    @Schema(example = "5", description = "Rating from 1 - 5 (Passed as String or Integer)")
     private String rating;
 
     @Size(
@@ -53,6 +57,7 @@ public class FeedbackRequest {
     @NotNull(
             message = "comment can be empty, however it CANNOT be null."
     )
+    @Schema(example = "A great doc. He heard all my health-concerns and was very helpful!", description = "An Brief Comment (Optional)")
     private String comment;
 
     /*
