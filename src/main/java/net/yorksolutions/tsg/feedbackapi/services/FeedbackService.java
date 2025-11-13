@@ -19,6 +19,7 @@ public class FeedbackService {
     /*
      * SECTION: Constructor-based D.I. (w/o @Autowired)
      */
+
     private FeedbackRepository feedbackRepository;
 
     public FeedbackService(FeedbackRepository feedbackRepository) {
@@ -28,25 +29,27 @@ public class FeedbackService {
     /*
      * SECTION: FeedbackService Methods
      */
-    public FeedbackEntity createNewFeedbackEntry(
-            FeedbackRequest clientInput
-    ){
+
+    public FeedbackEntity mapRequestToEntity(
+            FeedbackRequest clientInput, OffsetDateTime submittedAt
+    ) {
         // DESC: Map `FeedbackRequest` into `FeedbackEntity`
-        FeedbackEntity convertedInput = new FeedbackEntity(
-                clientInput.getMemberId(), clientInput.getProviderName(),
-                Integer.valueOf(clientInput.getRating()), clientInput.getComment()
-        );
+        FeedbackEntity convertedInput = new FeedbackEntity();
 
-        // DESC: Created submitted at date
-        convertedInput.setSubmittedAt(OffsetDateTime.now());
-
-        // DESC: Commit to Database
-        FeedbackEntity savedEntity = feedbackRepository.save(convertedInput);
-
-        // DESC: Retrieve ID from new Database entry
-        convertedInput.setId(savedEntity.getId());
+        // DESC: Initialize `FeedbackEntity` (add / incl. submittedAt)
+        convertedInput.setMemberId(clientInput.getMemberId());
+        convertedInput.setProviderName(clientInput.getProviderName());
+        convertedInput.setRating(Integer.valueOf(clientInput.getRating()));
+        convertedInput.setComment(clientInput.getComment());
+        convertedInput.setSubmittedAt(submittedAt);
 
         return convertedInput;
+    }
+
+    public FeedbackEntity createNewFeedbackEntry(
+            FeedbackEntity entityWithoutId
+    ){
+        return feedbackRepository.save(entityWithoutId);
     }
 
     public FeedbackResponse mapEntityToResponse(

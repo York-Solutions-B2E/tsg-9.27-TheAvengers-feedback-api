@@ -13,6 +13,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -79,13 +80,17 @@ public class FeedbackController {
          * SECTION: Handle necessary Validation-pass steps
          */
 
-        // DESC: Map to `FeedbackEntity` and add entry to database
-        FeedbackEntity newDatabaseEntry = feedbackService
-                .createNewFeedbackEntry(clientInput);
+        // DESC: Map `FeedbackRequest` to `FeedbackEntity`
+        FeedbackEntity entityWithoutId = feedbackService
+                .mapRequestToEntity(clientInput, OffsetDateTime.now());
+
+        // DESC: Map `FeedbackEntity` to D.B. Managed Entity (i.e., persist)
+        FeedbackEntity persistedEntityWithId = feedbackService
+                .createNewFeedbackEntry(entityWithoutId);
 
         // DESC: Map `FeedbackEntity` to `FeedbackResponse` (incl. `id` and `submittedAt`)
         FeedbackResponse responseForClient = feedbackService
-                .mapEntityToResponse(newDatabaseEntry);
+                .mapEntityToResponse(persistedEntityWithId);
 
         // TODO: Handle `FeedbackResponse` (i.e., "Publish" to Kafka)
         // TODO: Look into Kafka -- This will pass to `FeedbackEventPublisher`
