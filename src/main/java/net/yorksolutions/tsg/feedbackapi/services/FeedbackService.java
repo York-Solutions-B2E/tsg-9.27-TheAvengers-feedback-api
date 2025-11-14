@@ -1,5 +1,6 @@
 package net.yorksolutions.tsg.feedbackapi.services;
 
+import jakarta.transaction.Transactional;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackRequest;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackResponse;
 import net.yorksolutions.tsg.feedbackapi.entities.FeedbackEntity;
@@ -46,6 +47,7 @@ public class FeedbackService {
         return convertedInput;
     }
 
+    @Transactional
     public FeedbackEntity createNewFeedbackEntry(
             FeedbackEntity entityWithoutId
     ){

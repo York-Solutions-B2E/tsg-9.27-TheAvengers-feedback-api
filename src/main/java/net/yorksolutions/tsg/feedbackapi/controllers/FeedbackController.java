@@ -92,6 +92,8 @@ public class FeedbackController {
         FeedbackResponse responseForClient = feedbackService
                 .mapEntityToResponse(persistedEntityWithId);
 
+        // TODO: POSSIBLY necessary to prevent Kafka-Publish if Persist fails
+
         // TODO: Handle `FeedbackResponse` (i.e., "Publish" to Kafka)
         // TODO: Look into Kafka -- This will pass to `FeedbackEventPublisher`
 
@@ -110,6 +112,7 @@ public class FeedbackController {
             @PathVariable(name = "id") String uuidAsString
     ) {
         // DESC: Get Entity by ID (return `null` if not available)
+        // POSSIBLE FIXME: This may need to be rec'd as `Optional.of()`
         FeedbackEntity databaseReturnedEntity = feedbackService
                 .getFeedbackById(UUID.fromString(uuidAsString));
 

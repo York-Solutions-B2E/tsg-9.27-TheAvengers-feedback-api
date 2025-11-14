@@ -89,6 +89,23 @@ public class FeedbackResponse {
     }
 
     /*
+     * SECTION: Overrides for equals() and hashCode()
+     */
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FeedbackResponse that = (FeedbackResponse) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    /*
      * SECTION: toString Override
      */
     @Override
