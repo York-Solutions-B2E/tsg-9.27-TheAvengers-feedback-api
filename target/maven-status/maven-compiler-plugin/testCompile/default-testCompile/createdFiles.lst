@@ -1,0 +1,5 @@
+net/yorksolutions/tsg/feedbackapi/controllers/FeedbackControllerTests.class
+net/yorksolutions/tsg/feedbackapi/services/ValidationExceptionTests.class
+net/yorksolutions/tsg/feedbackapi/ApplicationTests.class
+net/yorksolutions/tsg/feedbackapi/services/FeedbackServiceTests.class
+net/yorksolutions/tsg/feedbackapi/messaging/FeedbackEventPublisherTests.class
