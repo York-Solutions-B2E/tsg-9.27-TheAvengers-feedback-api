@@ -144,7 +144,7 @@ public class FeedbackController {
      * @param memberId
      * @return 200 and resource (empty list if none)
      */
-    @GetMapping("/feedback?memberId=<id>")
+    @GetMapping("/feedback")
     public ResponseEntity<ArrayList<FeedbackResponse>> readAllFeedbackByMemberId(
             @RequestParam(name = "memberId") String memberId
     ) {
