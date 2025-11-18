@@ -5,6 +5,7 @@ import net.yorksolutions.tsg.feedbackapi.dtos.ErrorResponse;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackRequest;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackResponse;
 import net.yorksolutions.tsg.feedbackapi.entities.FeedbackEntity;
+import net.yorksolutions.tsg.feedbackapi.messaging.FeedbackEventPublisher;
 import net.yorksolutions.tsg.feedbackapi.services.FeedbackService;
 import net.yorksolutions.tsg.feedbackapi.services.ValidationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,13 +28,16 @@ public class FeedbackController {
 
     private FeedbackService feedbackService;
     private ValidationException validationExceptionService;
+    private FeedbackEventPublisher feedbackEventPublisher;
 
     public FeedbackController(
             FeedbackService feedbackService,
-            ValidationException validationExceptionService
+            ValidationException validationExceptionService,
+            FeedbackEventPublisher feedbackEventPublisher
     ) {
         this.feedbackService = feedbackService;
         this.validationExceptionService = validationExceptionService;
+        this.feedbackEventPublisher = feedbackEventPublisher;
     }
 
     /*
@@ -94,8 +98,8 @@ public class FeedbackController {
 
         // TODO: POSSIBLY necessary to prevent Kafka-Publish if Persist fails
 
-        // TODO: Handle `FeedbackResponse` (i.e., "Publish" to Kafka)
-        // TODO: Look into Kafka -- This will pass to `FeedbackEventPublisher`
+        // DESC: Handle `FeedbackResponse` (i.e., "Publish" to Kafka)
+        feedbackEventPublisher.sendFeedbackEvent(responseForClient);
 
         return ResponseEntity
                 .status(200)

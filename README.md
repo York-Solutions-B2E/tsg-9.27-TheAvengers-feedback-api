@@ -2,6 +2,21 @@
 
 The is the Feedback API completed with Spring.
 
+## Docker Compose (11/17)
+
+This will use Docker Compose for the following:
+
+- PostgreSQL
+- Kafka (the Broker)
+- Kafka Tools
+- Schema Registry
+- Control Center
+
+### Confluent: CP-Server
+
+1. Pull the Image: `docker pull confluentinc/cp-server:latest-ubi8`
+2. 
+
 ## PostgreSQL (through Docker)
 
 ### Settings
