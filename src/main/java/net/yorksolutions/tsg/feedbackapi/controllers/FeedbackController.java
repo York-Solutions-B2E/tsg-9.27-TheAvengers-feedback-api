@@ -20,6 +20,9 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
+
+// get added cross origins here
+@CrossOrigin(origins = "http://localhost:5173")
 public class FeedbackController {
 
     /*
