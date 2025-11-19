@@ -1,6 +1,5 @@
 package net.yorksolutions.tsg.feedbackapi.messaging;
 
-import net.yorksolutions.tsg.feedbackapi.dtos.Feedback;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -11,28 +10,25 @@ public class FeedbackEventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
+    @Value("${topic.name}")
+    private String topicName;
+
     public FeedbackEventPublisher(KafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    private static final String SCHEMA_VERSION = "1.0.0";
-    @Value("${topic.name}")
-    private String topicName;
-
     public void sendFeedbackEvent(FeedbackResponse feedbackResponse) {
-        Feedback feedbackEvent = Feedback.newBuilder()
-                .setId(feedbackResponse.getId().toString())
-                .setMemberId(feedbackResponse.getMemberId())
-                .setProviderName(feedbackResponse.getProviderName())
-                .setRating(feedbackResponse.getRating())
-                .setComment(feedbackResponse.getComment())
-                .setSubmittedAt(feedbackResponse.getSubmittedAt().toInstant().toEpochMilli())
-                .setSchemaVersion(SCHEMA_VERSION)
-                .build();
 
+        FeedbackEvent event = new FeedbackEvent(
+                feedbackResponse.getId(),
+                feedbackResponse.getMemberId(),
+                feedbackResponse.getProviderName(),
+                feedbackResponse.getRating(),
+                feedbackResponse.getComment(),
+                feedbackResponse.getSubmittedAt()
+        );
 
-
-        kafkaTemplate.send(topicName, feedbackEvent.getId().toString(), feedbackEvent);
-        System.out.println("Sent feedback event: " + feedbackEvent);
+        kafkaTemplate.send(topicName, event.id().toString(), event);
+        System.out.println("Sent JSON feedback event: " + event);
     }
 }
