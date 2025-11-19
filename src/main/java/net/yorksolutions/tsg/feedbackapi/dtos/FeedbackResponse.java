@@ -19,6 +19,7 @@ public class FeedbackResponse {
     private Integer rating;
     private String comment;
     private OffsetDateTime submittedAt;
+    private String schemaVersion = "1.0.0";
 
     /*
      * SECTION: No-Args Constructor
@@ -118,5 +119,13 @@ public class FeedbackResponse {
                 ", comment='" + comment + '\'' +
                 ", submittedAt=" + submittedAt +
                 '}';
+    }
+
+    public String getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public void setSchemaVersion(String schemaVersion) {
+        this.schemaVersion = schemaVersion;
     }
 }

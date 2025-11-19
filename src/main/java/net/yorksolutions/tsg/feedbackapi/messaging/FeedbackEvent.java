@@ -9,5 +9,6 @@ public record FeedbackEvent(
         String providerName,
         int rating,
         String comment,
-        OffsetDateTime submittedAt
+        OffsetDateTime submittedAt,
+        String schemaVersion
 ) {}
