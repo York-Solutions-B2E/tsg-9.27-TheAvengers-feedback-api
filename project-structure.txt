@@ -1,0 +1,50 @@
+.
+├── Dockerfile
+├── README.md
+├── pom.xml
+├── project-structure.txt
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── net
+    │   │       └── yorksolutions
+    │   │           └── tsg
+    │   │               └── feedbackapi
+    │   │                   ├── Application.java
+    │   │                   ├── controllers
+    │   │                   │   └── FeedbackController.java
+    │   │                   ├── dtos
+    │   │                   │   ├── ErrorResponse.java
+    │   │                   │   ├── Feedback.java
+    │   │                   │   ├── FeedbackRequest.java
+    │   │                   │   └── FeedbackResponse.java
+    │   │                   ├── entities
+    │   │                   │   └── FeedbackEntity.java
+    │   │                   ├── messaging
+    │   │                   │   ├── FeedbackEventPublisher.java
+    │   │                   │   └── KafkaProducerConfig.java
+    │   │                   ├── repositories
+    │   │                   │   └── FeedbackRepository.java
+    │   │                   └── services
+    │   │                       ├── FeedbackService.java
+    │   │                       └── ValidationException.java
+    │   └── resources
+    │       ├── application.properties
+    │       └── avro
+    │           └── feedback.avsc
+    └── test
+        └── java
+            └── net
+                └── yorksolutions
+                    └── tsg
+                        └── feedbackapi
+                            ├── ApplicationTests.java
+                            ├── controllers
+                            │   └── FeedbackControllerTests.java
+                            ├── messaging
+                            │   └── FeedbackEventPublisherTests.java
+                            └── services
+                                ├── FeedbackServiceTests.java
+                                └── ValidationExceptionTests.java
+
+25 directories, 23 files
