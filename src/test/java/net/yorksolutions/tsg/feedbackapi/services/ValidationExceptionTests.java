@@ -1,5 +1,6 @@
 package net.yorksolutions.tsg.feedbackapi.services;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import net.yorksolutions.tsg.feedbackapi.dtos.ErrorResponse;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackRequest;
 import org.junit.jupiter.api.Assertions;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -95,7 +97,20 @@ public class ValidationExceptionTests {
         );
     }
 
-    // TODO: Unit-Test for `convertBindingResultToErrorResponse`
+    @Test
+    @DisplayName("Ensure error-handling works as anticipated")
+    public void unreadableMessageHandler_returnError_givenBadJson() {
+        /* SECTION: Given Input Arrange[ment]... */
+
+        Throwable dummyExceptionCause = new Throwable()
+                .initCause(new JsonParseException(""));
+
+        ResponseEntity expectedResponse = new ResponseEntity.status(400).body();
+
+        /* SECTION: When Act[ed] Upon... */
+
+        /* SECTION: Then Assert Output Is... */
+    }
 
     // TODO: Unit-Test for `unreadableMessageHandler`
 
