@@ -1,67 +1,124 @@
-# README
+# Provider Feedback Portal - Feedback API (Spring Boot + Postgres + Kafka)
 
-The is the Feedback API completed with Spring.
+The **Feedback API** is the backend service for the Provider Feedback Portal.  
+It receives feedback submissions, stores them in **Postgres**, and publishes **Kafka events** that the analytics consumer service processes.
 
-## Docker Compose (11/17)
+This service is designed to run **together with**:
+- **[Frontend Feedback UI](https://github.com/York-Solutions-B2E/tsg-9.27-TheAvengers-frontend-feedback-ui)**
+- **[Feedback Analytics Consumer](https://github.com/York-Solutions-B2E/tsg-9.27-TheAvengers-feedback-analytics-consumer)**
+- **Postgres + Kafka** (started automatically via Docker Compose)
 
-This will use Docker Compose for the following:
+This API **cannot run in isolation** unless Postgres and Kafka are manually provided.
 
-- PostgreSQL
-- Kafka (the Broker)
-- Kafka Tools
-- Schema Registry
-- Control Center
+## How to Run the Application
 
-### Confluent: CP-Server
+#### Required Project Layout
+To run this system with Docker Compose, the **frontend**, **API**, and **consumer** applications must all be placed in the **same parent folder**.
 
-1. Pull the Image: `docker pull confluentinc/cp-server:latest-ubi8`
-2. 
-
-## PostgreSQL (through Docker)
-
-### Settings
-
-- Username: See *.env* file
-- Password: See *.env* file
-- Host:
-  - **IF** accessing from local machine (outside container): `localhost`
-  - **IF** accessing from another *Container* (inside Docker network): Service Name of PostgreSQL Container
-- Database Name: `final_project`
-- Port: `5433` | `5432` (Local | Docker)
-
-### Manual Docker Steps
-
-1. Start PostgreSQL instance:
+Example:
+```
+project-root/
+ ├── tsg-9.27-TheAvengers-frontend-feedback-ui/
+ ├── tsg-9.27-TheAvengers-feedback-api/
+ ├── tsg-9.27-TheAvengers-feedback-analytics-consumer/
+ └── docker-compose.yml
 
 ```
-docker run \
---name cont-postgres \
--p 5433:5432 \
--e POSTGRES_PASSWORD=FinalProject123 \
--e POSTGRES_DB=final_project \
--d postgres
+Use the **docker-compose.yml** file included in **this repository**.  
+It builds and runs:
+
+- The Feedback API
+- Postgres
+- Kafka
+- Kafka UI tools
+
+From the root of this repository:
+```
+docker compose up --build
+```
+This will automatically provide:
+
+- **Postgres database** (service name: `db`, internal port: `5432`)
+- **Kafka broker** (internal port: `9092`)
+- **Network connectivity** between all services
+
+The API container connects to Postgres using:
+```
+jdbc:postgresql://db:5432/final_project
+```
+The API listens on:
+```
+http://localhost:8080/api/v1
 ```
 
-2. Enter Shell for PostgreSQL container: `docker exec -it cont-postgres bash`
-3. Enter *psql* Shell: `psql -U postgres -d final_project` (password is not required)
+#### Features
 
-**Note:**
-- `docker run` command:
-  - `--name cont-postgres` - provide the *Container* name
-  - `-p 5433:5432` - set Local / Docker ports
-  - `-e POSTGRES_PASSWORD=FinalProject123` - set environment variables
-  - `-e POSTGRES_DB=final_project` - define default database to create/start into
-  - `-d` - run *Container* in "detached" mode
+- **POST /feedback** — submit feedback
+- **GET /feedback/{id}** — fetch feedback by UUID
+- **GET /feedback?memberId=...** — fetch feedback for a member
+- Stores feedback in **Postgres**
+- Publishes `feedback-submitted` events to **Kafka**
+- Uses **DTOs**, **validation**, and **exception handling**
 
-### Dockerfile
-TBD...
+#### Tech Stack
 
-### Docker Compose
+- **Java 17+**
 
-[See Docker Hub for Instructions](https://hub.docker.com/_/postgres)
+- **Spring Boot**
 
-## Potential Future Add-Ons
-The following is a list of *potential future add-ons* and *best-practice* alternatives not used in this code-base:
+- **Spring Web**
 
-- `FeedbackService` - `createNewFeedbackEntry()`: Logic to prevent multiple review
-  - More of a nice-to-have, however it is out of scope/spec
+- **Spring Data JPA**
+
+- **Postgres**
+
+- **Kafka (Producer)**
+
+- **Docker & Docker Compose**
+
+#### Running Tests
+You can still run backend tests locally without Docker:
+```
+mvn test
+```
+
+## Dependencies on Other Apps
+
+This application **depends on**:
+
+#### 1. **Postgres**
+Required for storing feedback.
+#### 2. **Kafka Broker**
+Required for publishing `feedback-submitted` events.
+#### 3. **Feedback Analytics Consumer**
+Reads the Kafka events that THIS API publishes.
+#### 4. **Frontend UI**
+Uses this API to post and fetch feedback.
+
+All of these are automatically started when you use the **root docker-compose**.
+
+## API .env Credentials
+
+```
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5433
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=FinalProject123
+POSTGRES_DB=final_project
+POSTGRES_URL=jdbc:postgresql://localhost:5433/final_project
+```
+
+## Summary
+
+You don’t run this service alone.  
+You run it with **everything else**, using Docker Compose:
+```
+docker compose up --build
+```
+This is the correct way to run the entire Provider Feedback Portal.
+
+## 👥 Team
+
+**The Avengers**
+- Michael Files
+- Gregg Trunnell
