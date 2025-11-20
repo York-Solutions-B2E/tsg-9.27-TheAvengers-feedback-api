@@ -26,7 +26,7 @@ public class FeedbackEventPublisher {
                 feedbackResponse.getRating(),
                 feedbackResponse.getComment(),
                 feedbackResponse.getSubmittedAt(),
-                "1.0.0" // ← HARD CODED
+                "1.0.0"
         );
 
         kafkaTemplate.send(topicName, event.id().toString(), event);
