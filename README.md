@@ -82,6 +82,17 @@ You can still run backend tests locally without Docker:
 mvn test
 ```
 
+In order to run Unit-Tests on the *FeedbackControllerTests.java*, please take the following steps:
+
+1. In IntelliJ -> Click Run (Toolbar)
+2. Click Edit Configurations
+3. Select the *FeedbackControllerTests* configuration (one may need to be created if not there)
+4. Under Build and Run, in the VM Options input field, add `-Dnet.bytebuddy.experimental=true`
+5. Click Apply
+6. Click Run
+
+This is necessary due to compatibility issues with JDK 25 and Byte Buddy (a Mockito requirement).
+
 ## Dependencies on Other Apps
 
 This application **depends on**:
