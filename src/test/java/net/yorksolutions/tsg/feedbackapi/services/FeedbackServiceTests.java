@@ -141,6 +141,81 @@ public class FeedbackServiceTests {
     }
 
     @Test
+    @DisplayName(
+            "Ensure ArrayList of `FeedbackEntity` objs. properly maps to ArrayList of `FeedbackResponse` objs"
+    )
+    public void mapEntitiesToResponse_returnFeedbackResponses_onValidRun() {
+        /* SECTION: Given Input Arrange[ment]... */
+
+        OffsetDateTime deterministicSubmittedAtDate01 = OffsetDateTime.now();
+        UUID deterministicUniqueEntityId01 = UUID.randomUUID();
+        FeedbackEntity dummyFeedbackEntity01 = new FeedbackEntity(
+                deterministicUniqueEntityId01, "m-123",
+                "Dr. Smith", 5,
+                "Great experience",  deterministicSubmittedAtDate01
+        );
+
+        OffsetDateTime deterministicSubmittedAtDate02 = OffsetDateTime.now();
+        UUID deterministicUniqueEntityId02 = UUID.randomUUID();
+        FeedbackEntity dummyFeedbackEntity02 = new FeedbackEntity(
+                deterministicUniqueEntityId02, "m-123",
+                "Dr. Jones", 2,
+                "Wait time was ridiculous... one star for being nice",
+                deterministicSubmittedAtDate02
+        );
+
+        ArrayList<FeedbackEntity> dummyFeedbackEntityList = new ArrayList<>();
+        dummyFeedbackEntityList.add(dummyFeedbackEntity01);
+        dummyFeedbackEntityList.add(dummyFeedbackEntity02);
+
+        FeedbackResponse expectedFeedbackResponse01 = new FeedbackResponse(
+                deterministicUniqueEntityId01, "m-123",
+                "Dr. Smith", 5,
+                "Great experience",  deterministicSubmittedAtDate01
+        );
+
+        FeedbackResponse expectedFeedbackResponse02 = new FeedbackResponse(
+                deterministicUniqueEntityId02, "m-123",
+                "Dr. Jones", 2,
+                "Wait time was ridiculous... one star for being nice",
+                deterministicSubmittedAtDate02
+        );
+        ArrayList<FeedbackResponse> expectedFeedbackResponses = new ArrayList<>();
+        expectedFeedbackResponses.add(expectedFeedbackResponse01);
+        expectedFeedbackResponses.add(expectedFeedbackResponse02);
+
+        /* SECTION: When Act[ed] Upon... */
+
+        ArrayList<FeedbackResponse> actualFeedbackResponses =
+                mockedFeedbackService.mapEntitiesToResponse(dummyFeedbackEntityList);
+
+        /* SECTION: Then Assert Output Is... */
+
+        Assertions.assertEquals(expectedFeedbackResponses, actualFeedbackResponses);
+    }
+
+    @Test
+    @DisplayName(
+            "Ensure empty ArrayList of `FeedbackEntity` objs. properly maps to empty ArrayList of `FeedbackResponse` objs"
+    )
+    public void mapEntitiesToResponse_returnEmptyFeedbackResponseArr_onValidRun() {
+        /* SECTION: Given Input Arrange[ment]... */
+
+        ArrayList<FeedbackEntity> dummyFeedbackEntityList = new ArrayList<>();
+
+        ArrayList<FeedbackResponse> expectedFeedbackResponses = new ArrayList<>();
+
+        /* SECTION: When Act[ed] Upon... */
+
+        ArrayList<FeedbackResponse> actualFeedbackResponses =
+                mockedFeedbackService.mapEntitiesToResponse(dummyFeedbackEntityList);
+
+        /* SECTION: Then Assert Output Is... */
+
+        Assertions.assertEquals(expectedFeedbackResponses, actualFeedbackResponses);
+    }
+
+    @Test
     @DisplayName("Ensure Repo. `.findById()` success (incl. stubbing the Feedback Repo.)")
     public void getFeedbackById_returnFeedbackEntity_givenUniqueId() {
         /* SECTION: Given Input Arrange[ment]... */
@@ -258,7 +333,6 @@ public class FeedbackServiceTests {
         );
     }
 }
-
 
 //    @Test
 //    @DisplayName("...")

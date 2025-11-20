@@ -29,9 +29,9 @@ public class FeedbackController {
      * SECTION: Constructor-based D.I. (w/o @Autowired)
      */
 
-    private FeedbackService feedbackService;
-    private ValidationException validationExceptionService;
-    private FeedbackEventPublisher feedbackEventPublisher;
+    private final FeedbackService feedbackService;
+    private final ValidationException validationExceptionService;
+    private final FeedbackEventPublisher feedbackEventPublisher;
 
     public FeedbackController(
             FeedbackService feedbackService,

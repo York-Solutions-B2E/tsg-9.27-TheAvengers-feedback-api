@@ -4,15 +4,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import net.yorksolutions.tsg.feedbackapi.dtos.ErrorResponse;
 import net.yorksolutions.tsg.feedbackapi.dtos.FeedbackRequest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
@@ -28,21 +25,9 @@ public class ValidationExceptionTests {
      * SECTION: Service / Repository Mocking
      */
 
-    // DESC: Initialize 'stubs' for external/complex dependencies
-//    @Mock
-//    private BindingResult stubbedBindingResult;
-
     // DESC: Initialize subject-file 'mock'
     @InjectMocks
     private ValidationException mockedValidationException;
-
-    // DESC: Pull in all 'stubs' before each test
-    // NOTE: This provides a 'clean slate' for each test
-    // ... in lieu of re-using a 'stub' across the board
-//    @BeforeEach
-//    public void setUp() {
-//        MockitoAnnotations.initMocks(this);
-//    }
 
     /**
      * The following test basically ensures that, when a BindingResult
@@ -98,26 +83,134 @@ public class ValidationExceptionTests {
     }
 
     @Test
-    @DisplayName("Ensure error-handling works as anticipated")
+    @DisplayName("Ensure error-handling works (JsonParseException)")
     public void unreadableMessageHandler_returnError_givenBadJson() {
         /* SECTION: Given Input Arrange[ment]... */
 
-        Throwable dummyExceptionCause = new Throwable()
-                .initCause(new JsonParseException(""));
+        FeedbackRequest dummyExampleRequest = new FeedbackRequest(
+                "123abc", "Dr. John Doe",
+                "5", "A great doctor!"
+        );
 
-        ResponseEntity expectedResponse = new ResponseEntity.status(400).body();
+        JsonParseException dummyExceptionCause =
+                new JsonParseException("msg. value is not applicable to test");
+
+        ResponseEntity<String> expectedResponse =
+                new ResponseEntity(
+                        "JSON is syntactically invalid. Please provide JSON like the following:\n"
+                        + dummyExampleRequest.toString(), HttpStatusCode.valueOf(400)
+                );
 
         /* SECTION: When Act[ed] Upon... */
 
+        ResponseEntity<String> actualResponse = mockedValidationException.unreadableMessageHandler(dummyExceptionCause);
+
         /* SECTION: Then Assert Output Is... */
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(
+                        expectedResponse.getBody(), actualResponse.getBody()),
+                () -> Assertions.assertEquals(
+                        expectedResponse.getStatusCode(), actualResponse.getStatusCode())
+        );
     }
 
-    // TODO: Unit-Test for `unreadableMessageHandler`
+    @Test
+    @DisplayName(
+            "Ensure error-handling works (Unhandled HttpMessageNotReadableException Error)"
+    )
+    public void unreadableMessageHandler_returnError_givenUnknownError() {
+        /* SECTION: Given Input Arrange[ment]... */
 
-    // TODO: Unit-Test for `ratingOmittedHandler`
+        FeedbackRequest dummyExampleRequest = new FeedbackRequest(
+                "123abc", "Dr. John Doe",
+                "5", "A great doctor!"
+        );
 
-    // TODO: Unit-Test for `dataFieldsOmittedHandler`
+        Throwable dummyExceptionCause =
+                new Throwable("msg. value is not applicable to test");
 
+        ResponseEntity<String> expectedResponse =
+                new ResponseEntity(
+                        "An unknown exception, around user input, has been encountered. Please provide JSON like the following:\n"
+                        + dummyExampleRequest.toString(), HttpStatusCode.valueOf(400)
+                );
+
+        /* SECTION: When Act[ed] Upon... */
+
+        ResponseEntity<String> actualResponse = mockedValidationException.unreadableMessageHandler(dummyExceptionCause);
+
+        /* SECTION: Then Assert Output Is... */
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(
+                        expectedResponse.getBody(), actualResponse.getBody()),
+                () -> Assertions.assertEquals(
+                        expectedResponse.getStatusCode(), actualResponse.getStatusCode())
+        );
+    }
+
+    @Test
+    @DisplayName("Ensure proper response for `ratingOmittedHandler()`")
+    public void ratingOmittedHandler_returnDeterministicErr_whenCalled() {
+        /* SECTION: Given Input Arrange[ment]... */
+
+        FeedbackRequest dummyExampleRequest = new FeedbackRequest(
+                "123abc", "Dr. John Doe",
+                "5", "A great doctor!"
+        );
+
+        ResponseEntity<String> expectedResponse =
+                new ResponseEntity(
+                        "The `rating` value appears to have been omitted. Please provide JSON like the following:\n"
+                        + dummyExampleRequest.toString(), HttpStatusCode.valueOf(400)
+                );
+
+        /* SECTION: When Act[ed] Upon... */
+
+        ResponseEntity<String> actualResponse = mockedValidationException
+                .ratingOmittedHandler();
+
+        /* SECTION: Then Assert Output Is... */
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(
+                        expectedResponse.getBody(), actualResponse.getBody()),
+                () -> Assertions.assertEquals(
+                        expectedResponse.getStatusCode(), actualResponse.getStatusCode())
+        );
+    }
+
+    @Test
+    @DisplayName("Ensure proper response for `dataFieldsOmittedHandler()`")
+    public void dataFieldsOmittedHandler_returnDeterministicErr_whenCalled() {
+        /* SECTION: Given Input Arrange[ment]... */
+
+        FeedbackRequest dummyExampleRequest = new FeedbackRequest(
+                "123abc", "Dr. John Doe",
+                "5", "A great doctor!"
+        );
+
+        ResponseEntity<String> expectedResponse =
+                new ResponseEntity(
+                        "One or more fields appear to be missing from the JSON payload. Please provide JSON like the following:\n"
+                        + dummyExampleRequest.toString(), HttpStatusCode.valueOf(400)
+                );
+
+        /* SECTION: When Act[ed] Upon... */
+
+        ResponseEntity<String> actualResponse = mockedValidationException
+                .dataFieldsOmittedHandler();
+
+        /* SECTION: Then Assert Output Is... */
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(
+                        expectedResponse.getBody(), actualResponse.getBody()),
+                () -> Assertions.assertEquals(
+                        expectedResponse.getStatusCode(), actualResponse.getStatusCode())
+        );
+    }
 }
 
 
